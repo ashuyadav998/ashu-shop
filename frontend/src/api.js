@@ -21,6 +21,4 @@ export const login = async (userData) => {
   return res.data;
 };
 
-export const API = {
-  API_BASE
-};
+
