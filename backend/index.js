@@ -13,7 +13,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
-
+app.use(cors({
+  origin: 'https://makhana-shop.netlify.app',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}))
 dotenv.config();
 
 const app = express();
@@ -29,7 +33,12 @@ app.use('/images', express.static(resolve(__dirname, 'public')));
 // Rutas API
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
-
+app.get('/',(req,res)=>{
+  res.send({
+    activeStatus:true,
+    error:false,
+  })
+})
 // Manejo de errores
 app.use(errorHandler);
 
