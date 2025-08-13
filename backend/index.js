@@ -13,7 +13,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 
-
+app.use(cors({
+  origin: 'https://makhana-shop.netlify.app',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}))
 dotenv.config();
 
 const app = express();
