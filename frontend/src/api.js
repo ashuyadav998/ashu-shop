@@ -1,0 +1,22 @@
+import axios from 'axios';
+
+const API_BASE = 'http://localhost:5000/api';
+
+
+// Productos
+export const getProducts = async () => {
+  const res = await axios.get(`${API_BASE}/products`);
+  return res.data;
+};
+
+// Registro de usuario
+export const register = async (userData) => {
+  const res = await axios.post(`${API_BASE}/auth/register`, userData);
+  return res.data;
+};
+
+// Login de usuario
+export const login = async (userData) => {
+  const res = await axios.post(`${API_BASE}/auth/login`, userData);
+  return res.data;
+};
