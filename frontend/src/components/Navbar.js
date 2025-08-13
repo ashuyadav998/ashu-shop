@@ -10,7 +10,7 @@ function Navbar({ onSearch }) {
   const user = JSON.parse(localStorage.getItem('user'));
   /* eslint-disable no-unused-vars */
   const [showDropdown, setShowDropdown] = useState(false);
-  const [setCartCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
 
   useEffect(() => {
     const updateCartCount = () => {
