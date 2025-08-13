@@ -29,7 +29,12 @@ app.use('/images', express.static(resolve(__dirname, 'public')));
 // Rutas API
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
-
+app.get('/',(req,res)=>{
+  res.send({
+    activeStatus:true,
+    error:false,
+  })
+})
 // Manejo de errores
 app.use(errorHandler);
 
