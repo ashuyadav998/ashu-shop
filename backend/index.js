@@ -33,6 +33,13 @@ app.use('/api/auth', authRoutes);
 // Manejo de errores
 app.use(errorHandler);
 
+app.get('/',(req,res)=>{
+  res.send({
+    activeStatus:true,
+    error:false,
+  })
+})
+
 // Arrancar servidor
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
