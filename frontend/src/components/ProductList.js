@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { getProducts } from "../api";
 import { CartContext } from "../context/CartContext";
 import { Link } from "react-router-dom";
+import { API } from "../api";
 
 function ProductList({ searchTerm }) {
   const [products, setProducts] = useState([]);
@@ -25,7 +26,7 @@ function ProductList({ searchTerm }) {
               <div className="card h-100 shadow-sm">
                 <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <img
-                    src={`http://localhost:5000${product.image}`}
+                    src={`${API.API_BASE}/${product.image}`}
                     className="card-img-top"
                     alt={product.name || "Producto"}
                     style={{ objectFit: "cover", height: "200px", cursor: 'pointer' }}

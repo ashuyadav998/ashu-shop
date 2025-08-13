@@ -11,12 +11,12 @@ export const getProducts = async () => {
 
 // Registro de usuario
 export const register = async (userData) => {
-  const res = await axios.post(`${API_BASE}/auth/register`, userData);
+  const res = await axios.post(`${API_BASE}/register`, userData);
   return res.data;
 };
 
 // Login de usuario
 export const login = async (userData) => {
-  const res = await axios.post(`${API_BASE}/auth/login`, userData);
+  const res = await axios.post(`${API_BASE}/login`, userData);
   return res.data;
 };
