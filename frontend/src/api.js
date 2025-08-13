@@ -20,3 +20,7 @@ export const login = async (userData) => {
   const res = await axios.post(`${API_BASE}/login`, userData);
   return res.data;
 };
+
+export const API = {
+  API_BASE
+};
