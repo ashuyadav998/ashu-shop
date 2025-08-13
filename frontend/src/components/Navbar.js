@@ -8,6 +8,7 @@ function Navbar({ onSearch }) {
   const { totalItems } = useContext(CartContext);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
+  /* eslint-disable no-unused-vars */
   const [showDropdown, setShowDropdown] = useState(false);
   const [setCartCount] = useState(0);
 

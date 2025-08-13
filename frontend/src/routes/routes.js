@@ -11,12 +11,13 @@ import { useState } from 'react';
 
 
 function AppRoutes() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm] = useState("");
   return (
     <Routes>
       
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginForm />} />
+      {/* <Route path="/profile" element={<Perfil />} /> */}
         <Route path="/" element={<ProductList searchTerm={searchTerm} />} />
 
       <Route path="/register" element={<RegisterForm />} />
