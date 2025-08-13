@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from "react";
 import { getProducts } from "../api";
 import { CartContext } from "../context/CartContext";
 import { Link } from "react-router-dom";
-import { API } from "../api";
+import  API  from "../api";
 
 function ProductList({ searchTerm }) {
   const [products, setProducts] = useState([]);
