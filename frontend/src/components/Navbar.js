@@ -9,7 +9,7 @@ function Navbar({ onSearch }) {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
   const [showDropdown, setShowDropdown] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
+  const [setCartCount] = useState(0);
 
   useEffect(() => {
     const updateCartCount = () => {

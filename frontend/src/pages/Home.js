@@ -12,7 +12,7 @@ export function logout() {
 }
 
 function HomePage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm] = useState("");
   return (
     <>
       
