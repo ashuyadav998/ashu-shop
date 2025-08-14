@@ -26,7 +26,7 @@ function ProductList({ searchTerm }) {
               <div className="card h-100 shadow-sm">
                 <Link to={`/product/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <img
-                    src={ `https://ashu-shop.vercel.app/${product.image}`}
+                    src={ `https://ashu-shop.vercel.app${product.image}`}
                     className="card-img-top"
                     alt={product.name || "Producto"}
                     style={{ objectFit: "cover", height: "200px", cursor: 'pointer' }}
