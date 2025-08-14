@@ -31,7 +31,7 @@ function ProductDetail() {
         {/* Imagen del producto */}
         <div className="col-md-6 text-center">
           <img
-            src={`http://localhost:5000${product.image}`}
+            src={ `https://ashu-shop.vercel.app/${product.image}`}
             alt={product.name}
             className="img-fluid rounded shadow-sm"
             style={{ maxHeight: '400px', objectFit: 'contain' }}
