@@ -16,16 +16,9 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// 🔹 Detectar entorno y configurar CORS
-const allowedOrigins =
-  process.env.NODE_ENV === 'production'
-    ? ['https://makhana-shop.netlify.app']
-    : ['http://localhost:3000'];
-
-
 app.use(cors({
-  origin: allowedOrigins,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  origin: 'https://makhana-shop.netlify.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
