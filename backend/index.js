@@ -9,17 +9,32 @@ import authRoutes from './src/routes/authRoutes.js';
 import errorHandler from './src/middlewares/errorHandler.js';
 import connectDB from './src/config/db.js';
 
-dotenv.config();
+dotenv.config();  
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
 
+const whitelist = [
+  'https://makhana-shop.netlify.app',
+  'http://localhost:3000'
+];
+
 app.use(cors({
-  origin: 'https://makhana-shop.netlify.app',
+  origin: function(origin, callback) {
+    // Permite requests sin origin (como Postman)
+    if (!origin) return callback(null, true);
+
+    if (whitelist.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 
 app.use(express.json());
