@@ -1,7 +1,6 @@
 import React from 'react';
 import ProductList from '../components/ProductList';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+
 import { useState } from 'react';
 
 
@@ -13,7 +12,9 @@ export function logout() {
 }
 
 function HomePage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, 
+    //setSearchTerm
+  ] = useState("");
   return (
     <>
       
