@@ -22,9 +22,10 @@ const allowedOrigins =
     ? ['https://makhana-shop.netlify.app']
     : ['http://localhost:3000'];
 
+
 app.use(cors({
   origin: allowedOrigins,
-  methods: ['GET', 'POST', 'OPTIONS'],
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
