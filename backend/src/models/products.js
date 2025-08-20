@@ -106,35 +106,35 @@ const products = [
   },
   {
     id: 16,
-    image: 'https://cdn.pixabay.com/photo/2017/03/01/14/55/chili-2107038_1280.jpg', // Chile y limón
+    image: '', // Chile y limón
     name: 'Makhana con Chile y Limón',
     price: 125,
     description: 'Mezcla perfecta de picante y frescura cítrica.'
   },
   {
     id: 17,
-    image: 'https://cdn.pixabay.com/photo/2018/01/27/11/14/indian-food-3110310_1280.jpg', // Tandoori (plato indio)
+    image: '', // Tandoori (plato indio)
     name: 'Makhana Tandoori',
     price: 130,
     description: 'Inspirado en sabores tandoori intensos y aromáticos.'
   },
   {
     id: 18,
-    image: 'https://cdn.pixabay.com/photo/2018/04/04/18/37/barbecue-3295085_1280.jpg', // BBQ
+    image: '', // BBQ
     name: 'Makhana BBQ',
     price: 135,
     description: 'Sabor ahumado estilo BBQ.'
   },
   {
     id: 19,
-    image: 'https://cdn.pixabay.com/photo/2017/03/29/00/34/honey-2188206_1280.jpg', // Miel y canela
+    image: '', // Miel y canela
     name: 'Makhana con Miel y Canela',
     price: 145,
     description: 'Dulce mezcla de miel y canela.'
   },
   {
     id: 20,
-    image: 'https://cdn.pixabay.com/photo/2016/03/27/22/20/snack-1284390_1280.jpg', // Gourmet mixto (snack variado)
+    image: '', // Gourmet mixto (snack variado)
     name: 'Makhana Gourmet Mixto',
     price: 170,
     description: 'Mezcla gourmet de sabores variados para paladares exigentes.'
