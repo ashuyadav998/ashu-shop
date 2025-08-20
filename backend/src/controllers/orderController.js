@@ -46,6 +46,6 @@ export const getOrders = async (req, res) => {
     res.json(orders);
   } catch (err) {
     console.error("❌ Error al obtener pedidos:", err);
-    res.status(500).json({ error: "Error al obtener pedidos" });
+    res.status(500).json({ error: "Error al obtener pedidos!" });
   }
 };
