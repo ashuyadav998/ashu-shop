@@ -8,7 +8,7 @@ import { useState } from "react";
 import './index.css';
 
 function App() {
-  const [//searchTerm //
+  const [searchTerm
   , setSearchTerm] = useState('');
   return (
     

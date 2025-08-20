@@ -13,7 +13,7 @@ export function logout() {
 
 function HomePage() {
   const [searchTerm, 
-    //setSearchTerm
+    setSearchTerm
   ] = useState("");
   return (
     <>

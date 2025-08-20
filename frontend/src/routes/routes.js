@@ -13,7 +13,7 @@ import { useState } from 'react';
 
 function AppRoutes() {
   const [searchTerm, 
-    // setSearchTerm
+    setSearchTerm
     ]
      = useState("");
   return (
