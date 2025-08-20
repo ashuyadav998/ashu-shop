@@ -4,7 +4,7 @@ function Footer() {
   return (
     <footer className="bg-light text-center text-lg-start mt-auto border-top">
       <div className="container p-3 d-flex flex-column flex-md-row justify-content-between align-items-center">
-        <span className="text-muted">&copy; {new Date().getFullYear()} EcomWeb. Todos los derechos reservados.</span>
+        <span className="text-muted">&copy; {new Date().getFullYear()} MAKHANA-SHOP. Todos los derechos reservados.</span>
         <div>
           <a href="https://facebook.com" className="text-muted me-3" target="_blank" rel="noopener noreferrer">
             <i className="fab fa-facebook-f"></i>
