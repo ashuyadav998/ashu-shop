@@ -1,54 +1,39 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { CartContext } from '../context/CartContext';
-import { useContext } from 'react';
 
 function Navbar({ onSearch }) {
-
   const { totalItems } = useContext(CartContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const user = JSON.parse(localStorage.getItem('user'));
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [cartCount, 
-    setCartCount] = useState(0);
-
-  useEffect(() => {
-    const updateCartCount = () => {
-      const storedCart = JSON.parse(localStorage.getItem('cart')) || [];
-      const totalItems = storedCart.reduce((sum, item) => sum + item.quantity, 0);
-      setCartCount(totalItems);
-    };
-
-    updateCartCount();
-
-    // Detectar cambios desde otros componentes
-    window.addEventListener('storage', updateCartCount);
-
-    return () => {
-      window.removeEventListener('storage', updateCartCount);
-    };
-  }, []);
-
-  useEffect(() => {
-    const storedUser = localStorage.getItem('user');  
-
-  sessionStorage.setItem('user', JSON.stringify(storedUser));
-    if (storedUser) {
-      setShowDropdown(false);     
-  }
-  }, []);
+  const [showPopup, setShowPopup] = useState(false);
+  const popupRef = useRef();
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    
+    setShowPopup(false);
     navigate('/login');
   };
 
+  // Cierra el popup si se hace clic fuera
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (popupRef.current && !popupRef.current.contains(e.target)) {
+        setShowPopup(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav className="navbar navbar-expand-lg shadow-sm" style={{ background: 'linear-gradient(90deg, #fff, #f8f9fa)' }}>
       <div className="container">
         <Link className="navbar-brand fw-bold" to="/">Makhana-Shop</Link>
+
+        {/* Botón hamburguesa responsive */}
         <button
           className="navbar-toggler"
           type="button"
@@ -62,29 +47,23 @@ function Navbar({ onSearch }) {
         </button>
 
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <form
-            className="d-flex mx-lg-auto my-2 my-lg-0"
-            style={{ maxWidth: 400, width: '100%' }}
-            onSubmit={e => { e.preventDefault(); }}
-          >
+          <form className="d-flex mx-lg-auto my-2 my-lg-0" style={{ maxWidth: 400, width: '100%' }}>
             <input
               className="form-control me-2"
               type="search"
               placeholder="Buscar productos..."
               aria-label="Buscar"
               onChange={e => onSearch(e.target.value)}
+              style={{ borderRadius: '20px' }}
             />
           </form>
 
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0 d-flex align-items-center gap-2">
             <li className="nav-item position-relative">
-              <Link to="/cart" className="btn btn-outline-primary" title="Carrito">
+              <Link to="/cart" className="btn btn-warning position-relative" title="Carrito" style={{ borderRadius: '50%' }}>
                 <i className="fas fa-shopping-cart"></i>
                 {totalItems > 0 && (
-                  <span
-                    className="badge bg-danger position-absolute top-0 start-100 translate-middle"
-                    style={{ fontSize: '0.7rem' }}
-                  >
+                  <span className="badge bg-danger position-absolute top-0 start-100 translate-middle" style={{ fontSize: '0.7rem' }}>
                     {totalItems}
                   </span>
                 )}
@@ -92,46 +71,41 @@ function Navbar({ onSearch }) {
             </li>
 
             {localStorage.getItem('token') ? (
-              <li className="nav-item dropdown">
+              <li className="nav-item" ref={popupRef} style={{ position: 'relative' }}>
                 <button
-                  className="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center"
-                  style={{ width: '40px', height: '40px', padding: 0 }}
-                  id="profileDropdown"
-                  data-bs-toggle="dropdown"
-                  aria-expanded={showDropdown}
-                  onClick={() => setShowDropdown(!showDropdown)}
+                  className="btn btn-outline-secondary rounded-circle"
+                  style={{ width: '40px', height: '40px' }}
+                  onClick={() => setShowPopup(!showPopup)}
                 >
                   <i className="fas fa-user"></i>
                 </button>
-                <ul
-                  className={`dropdown-menu dropdown-menu-end${showDropdown ? ' show' : ''}`}
-                  aria-labelledby="profileDropdown"
-                  style={{ minWidth: '180px' }}
-                >
-                  <li>
-                    <span className="dropdown-item-text fw-bold">
-                      {user?.name || 'Usuario'}
-                    </span>
-                  </li>
-                  <li><hr className="dropdown-divider" /></li>
-                  <li>
-                    <button className="dropdown-item text-danger" onClick={handleLogout}>
-                      <i className="fas fa-sign-out-alt me-2"></i>Logout
-                    </button>
-                  </li>
-                </ul>
+
+                {showPopup && (
+                  <div style={{
+                    position: 'absolute',
+                    top: '50px',
+                    right: 0,
+                    backgroundColor: 'white',
+                    border: '1px solid #ccc',
+                    borderRadius: '8px',
+                    padding: '1rem',
+                    width: '200px',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+                    zIndex: 1000
+                  }}>
+                    <p><strong>Nombre:</strong> {user?.name || 'Usuario'}</p>
+                    <p><strong>Email:</strong> {user?.email || 'Sin email'}</p>
+                    <button className="btn btn-danger w-100 mt-2" onClick={handleLogout}>Logout</button>
+                  </div>
+                )}
               </li>
             ) : (
               <>
                 <li className="nav-item">
-                  <Link to="/login" className="btn btn-primary" title="Login">
-                    <i className="fas fa-sign-in-alt"></i>
-                  </Link>
+                  <Link to="/login" state={{ backgroundLocation: location }} className="btn btn-primary rounded-pill">Login</Link>
                 </li>
                 <li className="nav-item">
-                  <Link to="/register" className="btn btn-outline-primary" title="Registro">
-                    <i className="fas fa-user-plus"></i>
-                  </Link>
+                  <Link to="/register" state={{ backgroundLocation: location }} className="btn btn-outline-primary rounded-pill">Registro</Link>
                 </li>
               </>
             )}

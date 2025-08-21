@@ -12,10 +12,7 @@ import { useState } from 'react';
 
 
 function AppRoutes() {
-  const [searchTerm, 
-    setSearchTerm
-    ]
-     = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   return (
     <Routes>
       
@@ -28,6 +25,10 @@ function AppRoutes() {
       <Route path="/product/:id" element={<ProductDetail />} />
       {/* Agrega más rutas según tus componentes */}
       <Route path="/cart" element={<Cart />} />
+      <Route path="/search" element={<ProductList searchTerm={searchTerm} />} />
+      <Route path="*" element={<h1>404 Not Found</h1>} />
+      
+      {/* Puedes agregar más rutas aquí */}
     </Routes>
   );
 }

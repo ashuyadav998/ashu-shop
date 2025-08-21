@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 function RegisterForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -30,7 +29,7 @@ function RegisterForm() {
 
     try {
       await register({ name, email, password });
-      toast.success('Usuario registrado correctamente'); // ✅ popup
+      toast.success('Usuario registrado correctamente');
       setName('');
       setEmail('');
       setPassword('');
@@ -39,19 +38,60 @@ function RegisterForm() {
       setTimeout(() => navigate('/login'), 2000); // redirige tras 2s
     } catch (err) {
       setError(err.response?.data?.message || 'Error al registrar');
-      toast.error(err.response?.data?.message || 'Error al registrar'); // popup error
+      toast.error(err.response?.data?.message || 'Error al registrar');
     }
   };
 
   return (
-    <div className="d-flex vh-100 align-items-center justify-content-center bg-light">
-      <div className="card shadow-sm p-4" style={{ maxWidth: '400px', width: '100%' }}>
+    <div 
+      className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+      style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1050 }}
+    >
+      <div 
+        className="card shadow-lg p-4 position-relative"
+        style={{ maxWidth: '400px', width: '100%', borderRadius: "15px", backgroundColor: "rgba(255,255,255,0.95)" }}
+      >
+        {/* Botón de cerrar */}
+        <button 
+          onClick={() => navigate("/")}
+          className="btn-close position-absolute top-0 end-0 m-3"
+          aria-label="Close"
+        ></button>
+
         <h2 className="text-center mb-4">Register</h2>
         <form onSubmit={handleSubmit}>
-          <input type="text" placeholder="Nombre completo" className="form-control mb-2" value={name} onChange={(e) => setName(e.target.value)} required />
-          <input type="email" placeholder="Correo electrónico" className="form-control mb-2" value={email} onChange={(e) => setEmail(e.target.value)} required />
-          <input type="password" placeholder="Contraseña" className="form-control mb-2" value={password} onChange={(e) => setPassword(e.target.value)} required />
-          <input type="password" placeholder="Confirmar contraseña" className="form-control mb-2" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+          <input 
+            type="text" 
+            placeholder="Nombre completo" 
+            className="form-control mb-2" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+            required 
+          />
+          <input 
+            type="email" 
+            placeholder="Correo electrónico" 
+            className="form-control mb-2" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+            required 
+          />
+          <input 
+            type="password" 
+            placeholder="Contraseña" 
+            className="form-control mb-2" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            required 
+          />
+          <input 
+            type="password" 
+            placeholder="Confirmar contraseña" 
+            className="form-control mb-2" 
+            value={confirmPassword} 
+            onChange={(e) => setConfirmPassword(e.target.value)} 
+            required 
+          />
 
           {error && <p className="text-danger small">{error}</p>}
 
@@ -65,7 +105,17 @@ function RegisterForm() {
       </div>
 
       {/* ToastContainer necesario para mostrar los toasts */}
-      <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer 
+        position="top-right" 
+        autoClose={3000} 
+        hideProgressBar={false} 
+        newestOnTop={false} 
+        closeOnClick 
+        rtl={false} 
+        pauseOnFocusLoss 
+        draggable 
+        pauseOnHover 
+      />
     </div>
   );
 }

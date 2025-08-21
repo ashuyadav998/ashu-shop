@@ -6,6 +6,7 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [show, setShow] = useState(true); // controla si se muestra el popup
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,16 +25,33 @@ function LoginForm() {
       const data = await login({ email, password });
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
-      // Redirige a la página previa guardada en "from"
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Error al iniciar sesión');
     }
   };
 
+  if (!show) return null; // si se cierra, no renderiza nada
+
   return (
-    <div className="d-flex vh-100 align-items-center justify-content-center bg-light">
-      <div className="card shadow-sm p-4" style={{ maxWidth: '400px', width: '100%' }}>
+    <div
+      className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+      style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1050 }}
+    >
+      <div
+        className="card shadow-lg p-4 position-relative"
+        style={{ maxWidth: '400px', width: '100%', borderRadius: "15px", backgroundColor: "rgba(255,255,255,0.9)" }}
+      >
+        {/* Botón de cerrar */}
+        <button
+          onClick={() => {
+            setShow(false);       // cierra el popup
+            navigate("/");        // redirige a la página principal
+          }}
+          className="btn-close position-absolute top-0 end-0 m-3"
+          aria-label="Close"
+        ></button>
+
         <h2 className="text-center mb-4">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-3">

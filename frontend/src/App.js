@@ -7,6 +7,8 @@ import { CartProvider } from "./context/CartContext";  // <-- Import CartProvide
 import { useState } from "react";
 import './index.css';
 
+
+
 function App() {
   const [searchTerm
   , setSearchTerm] = useState('');
