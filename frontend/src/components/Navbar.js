@@ -14,7 +14,7 @@ function Navbar({ onSearch }) {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setShowPopup(false);
-    navigate('/login');
+    navigate('/');
   };
 
   // Cierra el popup si se hace clic fuera

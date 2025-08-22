@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// const API_BASE = 'http://localhost:5000/api';
-const API_BASE='https://ashu-shop.vercel.app/api'
+const API_BASE = 'http://localhost:5000/api';
+// const API_BASE='https://ashu-shop.vercel.app/api'
 
 
 // Productos
@@ -23,8 +23,8 @@ export const login = async (userData) => {
 };
 
 // src/utils/getImageUrl.js
-const API_URL = "https://ashu-shop.vercel.app"; // tu backend en producción
-// const API_URL = "http://localhost:5000"; // ⚡ alterna si desarrollas en local
+//const API_URL = "https://ashu-shop.vercel.app"; // tu backend en producción
+ const API_URL = "http://localhost:5000"; // ⚡ alterna si desarrollas en local
 
 export function getImageUrl(imagePath) {
   if (!imagePath) return ""; 

@@ -7,38 +7,46 @@ function OrdersPage() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-        return;
-      }
-      
-      try {
-        const response = await fetch('http://localhost:5000/api/orders/me', {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+  // Simulated local data instead of a backend call
+  const localOrders = [
+    {
+      _id: '65f3f0d4b9a1e0a2c8a7c6d5',
+      total: 75.50,
+      createdAt: '2025-03-14T10:30:00Z',
+      items: [
+        { productName: 'Gaming Mouse', quantity: 1, price: 45.00 },
+        { productName: 'Keyboard Mat', quantity: 2, price: 15.25 },
+      ],
+    },
+    {
+      _id: '65f3f1e5c8b2f1b3d9a8c7e6',
+      total: 120.00,
+      createdAt: '2025-03-10T14:00:00Z',
+      items: [
+        { productName: 'Mechanical Keyboard', quantity: 1, price: 120.00 },
+      ],
+    },
+  ];
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'No se pudieron obtener los pedidos.');
+  useEffect(() => {
+    // Simulate a successful API call with a short delay
+    const simulateFetch = () => {
+      setLoading(true);
+      setTimeout(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          navigate('/login');
+          return;
         }
 
-        const data = await response.json();
-        setOrders(data);
-        
-      } catch (err) {
-        setError(err.message);
-      } finally {
+        // Use the local data instead of fetching from the server
+        setOrders(localOrders);
+        setError(null);
         setLoading(false);
-      }
+      }, 500); // 500ms delay to simulate network latency
     };
 
-    fetchOrders();
+    simulateFetch();
   }, [navigate]);
 
   if (loading) {
@@ -63,8 +71,8 @@ function OrdersPage() {
               <h5 className="mb-1">Pedido ID: {order._id}</h5>
               <small className="text-muted">Fecha: {new Date(order.createdAt).toLocaleDateString()}</small>
               <p className="mb-1">Total: ${order.total.toFixed(2)}</p>
-              <small className={`badge ${order.status === 'Enviado' ? 'bg-success' : 'bg-warning text-dark'}`}>{order.status}</small>
             </div>
+            {/* You can add more details here, like a link to a detailed order page */}
           </div>
         ))}
       </div>
