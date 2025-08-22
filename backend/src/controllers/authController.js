@@ -51,3 +51,23 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: 'Error al iniciar sesión' });
   }
 };
+
+/**
+ * @desc    Delete user account
+ * @route   DELETE /api/users/me
+ * @access  Private
+ */
+export const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    res.status(200).json({ message: 'Cuenta eliminada exitosamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al eliminar la cuenta' });
+  }
+};

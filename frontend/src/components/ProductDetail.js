@@ -11,11 +11,11 @@ function ProductDetail() {
 
   useEffect(() => {
     getProducts().then(products => {
-      const found = products.find(p => String(p.id) === id);
+      const found = products.find(p => String(p._id) === id);
       setProduct(found);
 
       // Productos aleatorios excluyendo el actual
-      const otherProducts = products.filter(p => String(p.id) !== id);
+      const otherProducts = products.filter(p => String(p._id) !== id);
       // Mezclamos aleatoriamente
       const shuffled = otherProducts.sort(() => 0.5 - Math.random());
       // Tomamos los primeros 4
@@ -73,9 +73,9 @@ function ProductDetail() {
         <h3>También te puede interesar</h3>
         <div className="row">
           {randomProducts.map(p => (
-            <div className="col-md-3 mb-3" key={p.id}>
+            <div className="col-md-3 mb-3" key={p._id}>
               <div className="card h-100 shadow-sm">
-                <Link to={`/product/${p.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to={`/product/${p._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <img
                     src={getImageUrl(p.image)}
                     alt={p.name}

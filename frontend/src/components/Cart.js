@@ -63,7 +63,7 @@ const handleConfirmOrder = async () => {
       shipping: formData,
     };
 
-    const res = await fetch("https://ashu-shop.vercel.app/api/orders", {
+    const res = await fetch("http://localhost:5000/api/orders", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",

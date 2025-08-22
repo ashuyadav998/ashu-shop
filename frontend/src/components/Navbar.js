@@ -91,10 +91,26 @@ function Navbar({ onSearch }) {
                     padding: '1rem',
                     width: '200px',
                     boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-                    zIndex: 1000
+                    zIndex: 1000,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
                   }}>
-                    <p><strong>Nombre:</strong> {user?.name || 'Usuario'}</p>
-                    <p><strong>Email:</strong> {user?.email || 'Sin email'}</p>
+                    <p className="fw-bold mb-2">Hola, {user?.name || 'Usuario'}</p>
+                    <Link 
+                      to="/orders" 
+                      className="btn btn-light text-start" 
+                      onClick={() => setShowPopup(false)}
+                    >
+                      Mis Pedidos
+                    </Link>
+                    <Link 
+                      to="/profile" 
+                      className="btn btn-light text-start" 
+                      onClick={() => setShowPopup(false)}
+                    >
+                      Configuración
+                    </Link>
                     <button className="btn btn-danger w-100 mt-2" onClick={handleLogout}>Logout</button>
                   </div>
                 )}

@@ -37,10 +37,10 @@ function ProductList({ searchTerm }) {
       <div className="row">
         {currentProducts.length > 0 ? (
           currentProducts.map((product) => (
-            <div className="col-md-4 mb-4" key={product.id}>
+            <div className="col-md-4 mb-4" key={product._id}>
               <div className="card h-100 shadow-sm">
                 <Link
-                  to={`/product/${product.id}`}
+                  to={`/product/${product._id}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
                   <img
