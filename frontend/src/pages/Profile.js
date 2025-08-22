@@ -49,7 +49,7 @@ function ProfilePage() {
     if (window.confirm("¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es irreversible.")) {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('http://localhost:5000/api/auth/me', {
+        const response = await fetch('https://ashu-shop.vercel.app/api/auth/me', {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
