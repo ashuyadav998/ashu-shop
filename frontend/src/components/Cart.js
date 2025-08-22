@@ -63,14 +63,14 @@ const handleConfirmOrder = async () => {
       shipping: formData,
     };
 
-    const res = await fetch("ashu-shop.vercel.app/api/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // ⚠ importante
-      },
-      body: JSON.stringify(orderData),
-    });
+    const res = await fetch("https://ashu-shop.vercel.app/api/orders", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`, // ⚠ important
+  },
+  body: JSON.stringify(orderData),
+});
 
     if (res.status === 401) {
       // Token inválido o expirado
