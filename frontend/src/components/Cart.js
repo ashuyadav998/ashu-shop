@@ -3,8 +3,6 @@ import { CartContext } from "../context/CartContext";
 import { useNavigate, useLocation } from "react-router-dom";
 import { getImageUrl } from "../api";
 
-
-
 function Cart() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,10 +24,7 @@ function Cart() {
   });
 
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleProceedToPayment = () => {
@@ -41,61 +36,58 @@ function Cart() {
     }
   };
 
-const handleConfirmOrder = async () => {
-  try {
-    const token = localStorage.getItem("token");
+  const handleConfirmOrder = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Debes iniciar sesión para realizar un pedido.");
+        navigate("/login", { state: { from: location.pathname } });
+        return;
+      }
 
-    // ✅ Verificamos que haya token
-    if (!token) {
-      alert("Debes iniciar sesión para realizar un pedido.");
-      navigate("/login", { state: { from: location.pathname } });
-      return;
+      // Construimos orderData según el schema
+      const orderData = {
+        orderItems: cart.map(item => ({
+          name: item.name,
+          qty: item.quantity,
+          price: item.price,
+          product: item._id, // ⚠ Debe ser ObjectId de MongoDB
+        })),
+        shippingAddress: {
+          address: formData.direccion,
+          city: formData.ciudad,
+          postalCode: formData.codigoPostal,
+          country: "España",
+        },
+        paymentMethod: "Tarjeta",
+        totalPrice: totalPrice,
+      };
+
+      const res = await fetch("https://ashu-shop.vercel.app/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Error en la respuesta del servidor:", errorData);
+        throw new Error(errorData.message || "Error al crear el pedido");
+      }
+
+      const data = await res.json();
+      console.log("✅ Pedido guardado:", data);
+      setStep(4);
+      setTimeout(() => clearCart(), 2000);
+
+    } catch (err) {
+      console.error("Error al confirmar pedido:", err);
+      alert("Hubo un problema al procesar tu pedido.");
     }
-
-    const orderData = {
-      items: cart.map(item => ({
-        productId: item.id,
-        name: item.name,
-        quantity: item.quantity,
-        price: item.price,
-      })),
-      total: totalPrice,
-      shipping: formData,
-    };
-
-    const res = await fetch("https://ashu-shop.vercel.app/api/orders", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`, // ⚠ important
-  },
-  body: JSON.stringify(orderData),
-});
-
-    if (res.status === 401) {
-      // Token inválido o expirado
-      alert("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
-      localStorage.removeItem("token");
-      navigate("/login", { state: { from: location.pathname } });
-      return;
-    }
-
-    if (!res.ok) {
-      throw new Error("Error al crear el pedido");
-    }
-
-    const data = await res.json();
-    console.log("✅ Pedido guardado:", data);
-
-    setStep(4);
-    setTimeout(() => clearCart(), 2000);
-
-  } catch (err) {
-    console.error("❌ Error:", err);
-    alert("Hubo un problema al procesar tu pedido.");
-  }
-};
-
+  };
 
   return (
     <div className="container mt-5">

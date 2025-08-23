@@ -2,13 +2,19 @@ import React, { useEffect, useState } from "react";
 
 function Orders() {
   const [orders, setOrders] = useState([]);
-  const userId = localStorage.getItem("token"); // o ID real
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/orders/${userId}`)
+    if (!token) return;
+    fetch("http://localhost:5000/api/orders", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then(res => res.json())
-      .then(data => setOrders(data));
-  }, [userId]);
+      .then(data => setOrders(data))
+      .catch(err => console.error("Error al cargar pedidos:", err));
+  }, [token]);
 
   return (
     <div className="container mt-4">
@@ -19,12 +25,14 @@ function Orders() {
         <ul className="list-group">
           {orders.map(order => (
             <li key={order._id} className="list-group-item">
-              <p><strong>Fecha:</strong> {new Date(order.fecha).toLocaleString()}</p>
-              <p><strong>Total:</strong> ${order.total.toFixed(2)}</p>
+              <p><strong>Fecha:</strong> {new Date(order.createdAt).toLocaleString()}</p>
+              <p><strong>Total:</strong> ${order.totalPrice.toFixed(2)}</p>
               <p><strong>Productos:</strong></p>
               <ul>
-                {order.productos.map(p => (
-                  <li key={p.productId}>{p.nombre} x {p.cantidad}</li>
+                {order.orderItems.map(item => (
+                  <li key={item.product}>
+                    {item.name} x {item.qty}
+                  </li>
                 ))}
               </ul>
             </li>

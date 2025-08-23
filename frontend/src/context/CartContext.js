@@ -17,7 +17,7 @@ export function CartProvider({ children }) {
 
   const addToCart = (product, qty = 1) => {
     setCart(prev => {
-      const idx = prev.findIndex(p => p.id === product.id);
+      const idx = prev.findIndex(p => p._id === product._id);
       if (idx !== -1) {
         const next = [...prev];
         next[idx] = { ...next[idx], quantity: (next[idx].quantity || 0) + qty };

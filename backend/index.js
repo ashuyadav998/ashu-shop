@@ -10,6 +10,7 @@ import ordersRoutes from './src/routes/orders.js';
 import errorHandler from './src/middlewares/errorHandler.js';
 import connectDB from './src/config/db.js';
 
+
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -48,7 +49,7 @@ app.use('/images', express.static(path.join(__dirname, 'src/public')));
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/orders', ordersRoutes); // ✅ Aquí se manejan todos los pedidos
-app.delete('/api/users/me', authRoutes); // ✅ Ruta para eliminar usuario
+
 
 // 🔹 Ruta raíz
 app.get('/', (req, res) => {

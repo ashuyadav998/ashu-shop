@@ -1,12 +1,10 @@
 import express from "express";
-import { createOrder, getOrders, verifyToken } from "../controllers/orderController.js";
+import { createOrder, getOrders } from "../controllers/orderController.js";
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// 🔹 Ruta para crear un pedido (requiere usuario autenticado)
-router.post("/", verifyToken, createOrder);
-
-// 🔹 Ruta para obtener todos los pedidos (puedes limitar solo a admin si quieres)
-router.get("/", verifyToken, getOrders);
+router.post("/", authMiddleware, createOrder);
+router.get("/", authMiddleware, getOrders);
 
 export default router;
