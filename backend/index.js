@@ -10,6 +10,8 @@ import ordersRoutes from './src/routes/orders.js';
 import errorHandler from './src/middlewares/errorHandler.js';
 import connectDB from './src/config/db.js';
 import cartRoutes from './src/routes/cartRoutes.js';
+import adminRoutes from './src/routes/adminRoutes.js';
+
 
 dotenv.config();
 
@@ -40,6 +42,10 @@ app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes); // ⬅️ CAMBIÉ /api a /api/auth
 app.use('/api/orders', ordersRoutes);
 app.use('/api/cart', cartRoutes); 
+app.use('/api/admin', adminRoutes)
+
+
+
 
 // 🔹 Ruta raíz
 app.get('/', (req, res) => {
