@@ -42,8 +42,7 @@ const app = express();
 
 // 🔹 CORS - UNA SOLA VEZ (quita las dos configuraciones duplicadas)
 app.use(cors({
-  origin: '*', // Acepta de cualquier origen
-  credentials: true,
+  origin: ['https://ashu-shop.netlify.app','https://ashu-dashboard.netlify.app/'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
 }));
@@ -109,8 +108,4 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`✅ Servidor corriendo en puerto ${PORT}`);
-  console.log(`📡 Accesible en:`);
-  console.log(`   - http://localhost:${PORT}`);
-  console.log(`   - http://10.0.2.2:${PORT} (emulador Android)`);
-  console.log(`   - http://192.168.1.148:${PORT} (dispositivo físico)`);
 });
