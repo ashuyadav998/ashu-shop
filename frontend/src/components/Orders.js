@@ -6,7 +6,7 @@ function Orders() {
 
   useEffect(() => {
     if (!token) return;
-    fetch("http://localhost:5000/api/orders", {
+    fetch("https://ashu-shop.vercel.app/api/orders", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

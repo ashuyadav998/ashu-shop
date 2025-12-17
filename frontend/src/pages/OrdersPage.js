@@ -18,7 +18,7 @@ useEffect(() => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/orders`, {
+      const response = await fetch(`https://ashu-shop.vercel.app/api/orders`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
