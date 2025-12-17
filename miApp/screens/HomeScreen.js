@@ -130,7 +130,7 @@ export default function HomeScreen({ navigation }) {
               onPress={() => navigation.navigate("ProductDetail", { product: item })}
             >
               <Image
-                source={{ uri: `http://192.168.1.148:5000${item.image}` }}
+                source={{ uri: `https://ashu-shop.vercel.app/${item.image}` }}
                 style={styles.image}
               />
               <Text style={styles.name} numberOfLines={1}>

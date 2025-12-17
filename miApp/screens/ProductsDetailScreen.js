@@ -27,7 +27,7 @@ export default function ProductDetailScreen({ route, navigation }) {
   const fetchRelatedProducts = async () => {
     try {
       setLoadingRelated(true);
-      const response = await fetch('http://192.168.1.148:5000/api/products');
+      const response = await fetch('https://ashu-shop.vercel.app/api/products');
       const data = await response.json();
       
       // Filtrar productos relacionados (misma categoría, excluyendo el actual)
@@ -71,7 +71,7 @@ export default function ProductDetailScreen({ route, navigation }) {
       onPress={() => navigation.push('ProductDetail', { product: item })}
     >
       <Image
-        source={{ uri: `http://192.168.1.148:5000${item.image}` }}
+        source={{ uri: `https://ashu-shop.vercel.app/${item.image}` }}
         style={styles.relatedImage}
       />
       <Text style={styles.relatedName} numberOfLines={2}>
@@ -84,7 +84,7 @@ export default function ProductDetailScreen({ route, navigation }) {
   return (
     <ScrollView style={styles.container}>
       <Image
-        source={{ uri: `http://192.168.1.148:5000${product.image}` }}
+        source={{ uri: `https://ashu-shop.vercel.app/${product.image}` }}
         style={styles.productImage}
       />
 
