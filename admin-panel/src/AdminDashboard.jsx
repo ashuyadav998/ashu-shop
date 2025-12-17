@@ -95,7 +95,7 @@ const AdminDashboard = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
-    window.location.href = '/login';
+    window.location.href = '/';
   };
 
   const getStatusColor = (status) => {
