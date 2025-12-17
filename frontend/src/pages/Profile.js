@@ -30,7 +30,7 @@ function ProfilePage() {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/api/auth/change-password', {
+      const response = await fetch('https://ashu-shop.vercel.app/api/auth/change-password', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ function ProfilePage() {
     if (!window.confirm("¿Estás seguro de que quieres eliminar tu cuenta? Esta acción es irreversible.")) return;
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/me', {
+      const response = await fetch('https://ashu-shop.vercel.app/api/auth/me', {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
