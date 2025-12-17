@@ -27,7 +27,7 @@ export default function HomeScreen({ navigation }) {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("http://192.168.1.150:5000/api/products");
+      const response = await fetch("https://ashu-shop.vercel.app/api/products");
       const text = await response.text();
 
       let data;
