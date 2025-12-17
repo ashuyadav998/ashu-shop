@@ -40,11 +40,28 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// 🔹 CORS - UNA SOLA VEZ (quita las dos configuraciones duplicadas)
+
+const allowedOrigins = [
+  'https://ashu-shop.netlify.app',
+  'https://ashu-dashboard.netlify.app',
+];
+
 app.use(cors({
-  origin: ['https://ashu-shop.netlify.app','https://ashu-dashboard.netlify.app/'],
+  origin: function (origin, callback) {
+    // Permite peticiones sin origin (apps móviles, Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Accept']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
+  optionsSuccessStatus: 200
 }));
 
 // 🔹 Middlewares
