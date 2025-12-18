@@ -85,6 +85,3 @@ if (process.env.NODE_ENV !== 'production') {
     console.log(`✅ Servidor corriendo en puerto ${PORT}`);
   });
 }
-
-// Para Vercel
-export default app;
