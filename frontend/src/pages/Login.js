@@ -1,93 +1,185 @@
 import React, { useState, useEffect } from 'react';
-import { login } from '../api';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AUTH_URL } from '../config/config';
+import { useCart } from '../context/CartContext'; // ⬅️ Importar useCart
 
-function LoginForm() {
+export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [show, setShow] = useState(true); // controla si se muestra el popup
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const from = location.state?.from || "/";
+  const [loading, setLoading] = useState(false);
+  const { loadCart } = useCart(); // ⬅️ Obtener loadCart
 
   useEffect(() => {
-    if (localStorage.getItem('token')) {
-      navigate('/');
-    }
-  }, [navigate]);
+    const checkToken = async () => {
+      const token = await AsyncStorage.getItem('token');
+      if (token) {
+        // Cargar carrito antes de navegar
+        await loadCart();
+        navigation.replace('Home');
+      }
+    };
+    checkToken();
+  }, []);
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Por favor ingresa email y contraseña');
+      return;
+    }
+
+    setLoading(true);
     setError('');
+
     try {
-      const data = await login({ email, password });
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      navigate(from, { replace: true });
+      console.log('🔐 Intentando login en:', `${AUTH_URL}/login`);
+      
+      const response = await fetch(`${AUTH_URL}/login`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      console.log('📡 Status:', response.status);
+
+      const text = await response.text();
+      console.log('📦 Respuesta:', text);
+      
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        console.error('❌ Error parseando JSON:', text);
+        Alert.alert('Error', 'Respuesta inválida del servidor');
+        return;
+      }
+
+      if (response.ok) {
+        // Guardar token y usuario
+        await AsyncStorage.setItem('token', data.token);
+        await AsyncStorage.setItem('user', JSON.stringify(data.user));
+        
+        // ⬇️ CARGAR CARRITO DEL SERVIDOR
+        console.log('🛒 Cargando carrito del usuario...');
+        await loadCart();
+        
+        Alert.alert('Éxito', `Bienvenido ${data.user.name}`);
+        navigation.replace('Home');
+      } else {
+        setError(data.message || 'Credenciales incorrectas');
+        Alert.alert('Error', data.message || 'Credenciales incorrectas');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Error al iniciar sesión');
+      console.error('❌ Error completo:', err);
+      Alert.alert(
+        'Error de conexión', 
+        `No se puede conectar con el servidor.\n\nVerifica:\n1. Conexión a internet\n2. Backend funcionando\n\nURL: ${AUTH_URL}/login`
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (!show) return null; // si se cierra, no renderiza nada
-
   return (
-    <div
-      className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
-      style={{ backgroundColor: "rgba(0,0,0,0.5)", zIndex: 1050 }}
-    >
-      <div
-        className="card shadow-lg p-4 position-relative"
-        style={{ maxWidth: '400px', width: '100%', borderRadius: "15px", backgroundColor: "rgba(255,255,255,0.9)" }}
-      >
-        {/* Botón de cerrar */}
-        <button
-          onClick={() => {
-            setShow(false);       // cierra el popup
-            navigate("/");        // redirige a la página principal
-          }}
-          className="btn-close position-absolute top-0 end-0 m-3"
-          aria-label="Close"
-        ></button>
+    <View style={styles.overlay}>
+      <View style={styles.card}>
+        <Text style={styles.title}>Login</Text>
 
-        <h2 className="text-center mb-4">Login</h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label htmlFor="email" className="form-label">Email address</label>
-            <input
-              id="email"
-              type="email"
-              className="form-control"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-              autoComplete="email"
-            />
-          </div>
-          <div className="mb-3">
-            <label htmlFor="password" className="form-label">Password</label>
-            <input
-              id="password"
-              type="password"
-              className="form-control"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              autoComplete="current-password"
-            />
-          </div>
-          {error && <p className="text-danger small">{error}</p>}
-          <button type="submit" className="btn btn-primary w-100">Sign in</button>
-        </form>
-        <div className="text-center mt-3">
-          <span className="small">Not a member? </span>
-          <a href="/register" className="text-decoration-none">Register</a>
-        </div>
-      </div>
-    </div>
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#777"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#777"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        {error ? <Text style={styles.error}>{error}</Text> : null}
+
+        {loading ? (
+          <ActivityIndicator size="large" color="#4A6CF7" style={{ marginVertical: 10 }} />
+        ) : (
+          <TouchableOpacity style={styles.button} onPress={handleLogin}>
+            <Text style={styles.buttonText}>Sign in</Text>
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity onPress={() => navigation.navigate('Register')} style={{ marginTop: 15 }}>
+          <Text style={styles.link}>Not a member? Register</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
-export default LoginForm;
+const styles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  card: {
+    width: '85%',
+    padding: 25,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  input: {
+    height: 50,
+    backgroundColor: '#F2F4F7',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    fontSize: 16,
+  },
+  button: {
+    backgroundColor: '#4A6CF7',
+    paddingVertical: 15,
+    borderRadius: 12,
+    marginTop: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  link: {
+    color: '#4A6CF7',
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  error: {
+    color: 'red',
+    fontSize: 14,
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+});

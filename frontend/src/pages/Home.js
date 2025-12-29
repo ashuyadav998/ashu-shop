@@ -1,47 +1,425 @@
-import React, { useState } from 'react';
-import ProductList from '../components/ProductList';
+import React, { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  Alert,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl, // ⬅️ Agregar RefreshControl
+} from "react-native";
+import { useCart } from '../context/CartContext';
 
-export function logout() {
-  localStorage.removeItem('token');
-  window.location.href = '/login';
-}
+export default function HomeScreen({ navigation }) {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false); // ⬅️ Estado para pull-to-refresh
+  const [currentPage, setCurrentPage] = useState(1);
+  const { getCartCount, loadCart } = useCart(); // ⬅️ Agregar loadCart
+  
+  const PRODUCTS_PER_PAGE = 10;
 
-function HomePage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  useEffect(() => {
+    fetchProducts();
+    loadCart(); // ⬅️ Cargar carrito al montar
+  }, []);
+
+  // ⬇️ NUEVA FUNCIÓN: Refresh manual
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadCart(); // Sincronizar carrito
+    await fetchProducts(); // Recargar productos
+    setRefreshing(false);
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("https://ashu-shop.vercel.app/api/products");
+      const text = await response.text();
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (error) {
+        console.log("Error parseando JSON:", text);
+        Alert.alert("Error", "Respuesta inválida del servidor");
+        setLoading(false);
+        return;
+      }
+
+      setProducts(data);
+    } catch (error) {
+      console.log("Error fetch:", error);
+      Alert.alert("Error", "No se pueden cargar los productos");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCurrentPageProducts = () => {
+    const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
+    const endIndex = startIndex + PRODUCTS_PER_PAGE;
+    return products.slice(startIndex, endIndex);
+  };
+
+  const totalPages = Math.ceil(products.length / PRODUCTS_PER_PAGE);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const handleGoToPage = (page) => {
+    setCurrentPage(page);
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#4A6CF7" />
+        <Text style={{ marginTop: 10 }}>Cargando productos...</Text>
+      </View>
+    );
+  }
+
+  const cartCount = getCartCount();
+  const currentProducts = getCurrentPageProducts();
 
   return (
-    <>
-      {/* Banner principal */}
-      <div 
-        className="banner d-flex flex-column justify-content-center align-items-center text-center text-white"
-        style={{
-          backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1598514982292-cda6451c872d?auto=format&fit=crop&w=1950&q=80')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          height: '350px',
-          position: 'relative'
-        }}
-      >
-        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.1)', padding: '20px', borderRadius: '15px' }}>
-          <h1 className="display-4 fw-bold" style={{ color: '#fff', textShadow: '2px 2px 4px rgba(0,0,0,0.7)' }}>
-            Bienvenido a Makhana-Shop
-          </h1>
-          <p className="lead" style={{ color: '#f0f0f0' }}>
-            Descubre nuestros productos destacados y ofertas exclusivas
-          </p>
-          <a href="#productos" className="btn btn-warning btn-lg mt-3">
-            Ver Productos
-          </a>
-        </div>
-      </div>
+    <View style={styles.container}>
+      {/* Header con título y carrito */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Productos</Text>
+        
+        <View style={styles.headerRight}>
+          {/* Botón de sincronizar */}
+          <TouchableOpacity 
+            style={styles.syncButton}
+            onPress={onRefresh}
+          >
+            <Text style={styles.syncIcon}>🔄</Text>
+          </TouchableOpacity>
 
-      {/* Main Content */}
-      <div className="container mt-5" id="productos" style={{ backgroundColor: '#f9f9f9', borderRadius: '15px', padding: '30px' }}>
-        <h2 className="mb-4" style={{ color: '#333' }}>Nuestros Productos</h2>
-        <ProductList searchTerm={searchTerm} />
-      </div>
-    </>
+          {/* Botón de perfil */}
+          <TouchableOpacity 
+            style={styles.profileButton}
+            onPress={() => navigation.navigate('Profile')}
+          >
+            <Text style={styles.profileIcon}>👤</Text>
+          </TouchableOpacity>
+
+          {/* Icono del carrito */}
+          <TouchableOpacity 
+            style={styles.cartButton}
+            onPress={() => navigation.navigate('Cart')}
+          >
+            <Text style={styles.cartIcon}>🛒</Text>
+            {cartCount > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{cartCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Grid de productos con ScrollView y RefreshControl */}
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#4A6CF7']}
+            tintColor="#4A6CF7"
+          />
+        }
+      >
+        <View style={styles.productsGrid}>
+          {currentProducts.map((item) => (
+            <TouchableOpacity
+              key={item._id}
+              style={styles.card}
+              onPress={() => navigation.navigate("ProductDetail", { product: item })}
+            >
+              <Image
+                source={{ uri: `https://ashu-shop.vercel.app/${item.image}` }}
+                style={styles.image}
+              />
+              <Text style={styles.name} numberOfLines={1}>
+                {item.name}
+              </Text>
+              <Text style={styles.price}>€{item.price.toFixed(2)}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        {/* Información de paginación */}
+        {totalPages > 1 && (
+          <View style={styles.pageInfo}>
+            <Text style={styles.pageInfoText}>
+              Mostrando {((currentPage - 1) * PRODUCTS_PER_PAGE) + 1}-
+              {Math.min(currentPage * PRODUCTS_PER_PAGE, products.length)} de {products.length} productos
+            </Text>
+          </View>
+        )}
+
+        {/* Paginación */}
+        {totalPages > 1 && (
+          <View style={styles.paginationContainer}>
+            <TouchableOpacity
+              style={[
+                styles.paginationButton,
+                currentPage === 1 && styles.paginationButtonDisabled
+              ]}
+              onPress={handlePrevPage}
+              disabled={currentPage === 1}
+            >
+              <Text style={[
+                styles.paginationButtonText,
+                currentPage === 1 && styles.paginationButtonTextDisabled
+              ]}>
+                ← Anterior
+              </Text>
+            </TouchableOpacity>
+
+            <View style={styles.pageNumbers}>
+              {[...Array(totalPages)].map((_, index) => {
+                const pageNumber = index + 1;
+                
+                if (
+                  pageNumber === 1 ||
+                  pageNumber === totalPages ||
+                  (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                ) {
+                  return (
+                    <TouchableOpacity
+                      key={pageNumber}
+                      style={[
+                        styles.pageNumberButton,
+                        currentPage === pageNumber && styles.pageNumberButtonActive
+                      ]}
+                      onPress={() => handleGoToPage(pageNumber)}
+                    >
+                      <Text style={[
+                        styles.pageNumberText,
+                        currentPage === pageNumber && styles.pageNumberTextActive
+                      ]}>
+                        {pageNumber}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                } else if (
+                  pageNumber === currentPage - 2 ||
+                  pageNumber === currentPage + 2
+                ) {
+                  return <Text key={pageNumber} style={styles.ellipsis}>...</Text>;
+                }
+                return null;
+              })}
+            </View>
+
+            <TouchableOpacity
+              style={[
+                styles.paginationButton,
+                currentPage === totalPages && styles.paginationButtonDisabled
+              ]}
+              onPress={handleNextPage}
+              disabled={currentPage === totalPages}
+            >
+              <Text style={[
+                styles.paginationButtonText,
+                currentPage === totalPages && styles.paginationButtonTextDisabled
+              ]}>
+                Siguiente →
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
-export default HomePage;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#E8ECF4",
+    paddingHorizontal: 15,
+    paddingTop: 50,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  syncButton: {
+    marginRight: 10,
+    padding: 8,
+  },
+  syncIcon: {
+    fontSize: 24,
+  },
+  profileButton: {
+    marginRight: 10,
+    padding: 8,
+  },
+  profileIcon: {
+    fontSize: 28,
+  },
+  cartButton: {
+    position: 'relative',
+    padding: 8,
+  },
+  cartIcon: {
+    fontSize: 28,
+  },
+  badge: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: '#FF4444',
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+  },
+  badgeText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  loader: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scrollContent: {
+    paddingBottom: 30,
+  },
+  productsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  card: {
+    backgroundColor: "white",
+    width: "48%",
+    borderRadius: 16,
+    padding: 10,
+    marginBottom: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+  image: {
+    width: "100%",
+    height: 120,
+    borderRadius: 12,
+    marginBottom: 10,
+    backgroundColor: "#ddd",
+  },
+  name: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#333",
+  },
+  price: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 5,
+    color: "#4A6CF7",
+  },
+  pageInfo: {
+    alignItems: 'center',
+    paddingVertical: 15,
+  },
+  pageInfoText: {
+    fontSize: 13,
+    color: '#6B7280',
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    marginBottom: 20,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  paginationButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    backgroundColor: '#4A6CF7',
+  },
+  paginationButtonDisabled: {
+    backgroundColor: '#D1D5DB',
+  },
+  paginationButtonText: {
+    color: 'white',
+    fontWeight: '600',
+    fontSize: 14,
+  },
+  paginationButtonTextDisabled: {
+    color: '#9CA3AF',
+  },
+  pageNumbers: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  pageNumberButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+  },
+  pageNumberButtonActive: {
+    backgroundColor: '#4A6CF7',
+  },
+  pageNumberText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  pageNumberTextActive: {
+    color: 'white',
+  },
+  ellipsis: {
+    fontSize: 16,
+    color: '#9CA3AF',
+    paddingHorizontal: 4,
+  },
+});
